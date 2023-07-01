@@ -1,1 +1,0 @@
-# coupan-wheel

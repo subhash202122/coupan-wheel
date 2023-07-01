@@ -1,37 +1,30 @@
 const wheel = document.getElementById("wheel");
 const spinBtn = document.getElementById("spin-btn");
 const finalValue = document.getElementById("final-value");
-//Object that stores values of minimum and maximum angle for a value
+
+// Object that stores values of minimum and maximum angle for a value
 const rotationValues = [
   { minDegree: 0, maxDegree: 30, value: "Try again" },
   { minDegree: 31, maxDegree: 90, value: "10% off" },
-  { minDegree: 91, maxDegree: 150, value: "20% off"},
+  { minDegree: 91, maxDegree: 150, value: "20% off" },
   { minDegree: 151, maxDegree: 210, value: "30% off" },
   { minDegree: 211, maxDegree: 270, value: "40% off" },
   { minDegree: 271, maxDegree: 330, value: "50% off" },
   { minDegree: 331, maxDegree: 360, value: "60% off" },
 ];
-//Size of each piece
+
+// Size of each piece
 const data = [16, 16, 16, 16, 16, 16];
-//background color for each piece
-var pieColors = [
-  "#8b35bc",
-  "#b163da",
-  "#8b35bc",
-  "#b163da",
-  "#8b35bc",
-  "#b163da",
-];
-//Create chart
-let myChart = new Chart(wheel, {
-  //Plugin for displaying text on pie chart
+
+// Background color for each piece
+const pieColors = ["#FF0000", "#FF5555", "#FFAAAA", "#FFCCCC", "#FF6666", "#FF8888"];
+
+// Create chart
+const myChart = new Chart(wheel, {
   plugins: [ChartDataLabels],
-  //Chart Type Pie
   type: "pie",
   data: {
-    //Labels(values which are to be displayed on chart)
-    labels: [ Try Again, 10% off, 30% off, 40% Off, 50% off, 60% off],
-    //Settings for dataset/pie
+    labels: ["Try Again", "10% off", "20% off", "30% off", "40% off", "50% off", "60% off"],
     datasets: [
       {
         backgroundColor: pieColors,
@@ -40,63 +33,70 @@ let myChart = new Chart(wheel, {
     ],
   },
   options: {
-    //Responsive chart
     responsive: true,
     animation: { duration: 0 },
     plugins: {
-      //hide tooltip and legend
       tooltip: false,
       legend: {
         display: false,
       },
-      //display labels inside pie chart
       datalabels: {
-        color: "#ffffff",
+        color: "#FFFFFF",
         formatter: (_, context) => context.chart.data.labels[context.dataIndex],
         font: { size: 24 },
       },
     },
   },
 });
-//display value based on the randomAngle
+
+// Display value based on the randomAngle
 const valueGenerator = (angleValue) => {
-  for (let i of rotationValues) {
-    //if the angleValue is between min and max then display it
-    if (angleValue >= i.minDegree && angleValue <= i.maxDegree) {
-      finalValue.innerHTML = `<p>Value: ${i.value}</p>`;
+  if (angleValue >= rotationValues[0].minDegree && angleValue <= rotationValues[0].maxDegree) {
+    finalValue.innerHTML = `<p style="color: #FF0000;">Value: ${rotationValues[0].value}</p>`;
+    spinBtn.disabled = false;
+    return;
+  }
+
+  for (let i = 1; i < rotationValues.length; i++) {
+    if (angleValue >= rotationValues[i].minDegree && angleValue <= rotationValues[i].maxDegree) {
+      finalValue.innerHTML = `<p style="color: #0000FF;">Value: ${rotationValues[i].value}</p>`;
       spinBtn.disabled = false;
       break;
     }
   }
 };
 
-//Spinner count
+// Spinner count
 let count = 0;
-//100 rotations for animation and last rotation for result
+let isFirstSpin = true;
+// 100 rotations for animation and last rotation for result
 let resultValue = 101;
-//Start spinning
+
+// Start spinning
 spinBtn.addEventListener("click", () => {
   spinBtn.disabled = true;
-  //Empty final value
-  finalValue.innerHTML = `<p>Good Luck!</p>`;
-  //Generate random degrees to stop at
-  let randomDegree = Math.floor(Math.random() * (355 - 0 + 1) + 0);
-  //Interval for rotation animation
-  let rotationInterval = window.setInterval(() => {
-    //Set rotation for piechart
-    /*
-    Initially to make the piechart rotate faster we set resultValue to 101 so it rotates 101 degrees at a time and this reduces by 1 with every count. Eventually on the last rotation, we rotate by 1 degree at a time.
-    */
+  finalValue.innerHTML = "";
+
+  // Generate random degrees to stop at
+  const randomDegree = Math.floor(Math.random() * (355 - 0 + 1) + 0);
+
+  // Interval for rotation animation
+  const rotationInterval = setInterval(() => {
     myChart.options.rotation = myChart.options.rotation + resultValue;
-    //Update chart with new value;
     myChart.update();
-    //If rotation>360 reset it back to 0
+
     if (myChart.options.rotation >= 360) {
       count += 1;
       resultValue -= 5;
       myChart.options.rotation = 0;
-    } else if (count > 15 && myChart.options.rotation == randomDegree) {
-      valueGenerator(randomDegree);
+    } else if (count > 15 && myChart.options.rotation === randomDegree) {
+      if (isFirstSpin) {
+        valueGenerator(randomDegree);
+        isFirstSpin = false;
+      } else {
+        const valueIndex = Math.floor(Math.random() * (rotationValues.length - 1) + 1);
+        valueGenerator(randomDegree);
+      }
       clearInterval(rotationInterval);
       count = 0;
       resultValue = 101;

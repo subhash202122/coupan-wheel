@@ -3,13 +3,13 @@ const spinBtn = document.getElementById("spin-btn");
 const finalValue = document.getElementById("final-value");
 //Object that stores values of minimum and maximum angle for a value
 const rotationValues = [
-  { minDegree: 0, maxDegree: 30, value: 2 },
-  { minDegree: 31, maxDegree: 90, value: 1 },
-  { minDegree: 91, maxDegree: 150, value: 6 },
-  { minDegree: 151, maxDegree: 210, value: 5 },
-  { minDegree: 211, maxDegree: 270, value: 4 },
-  { minDegree: 271, maxDegree: 330, value: 3 },
-  { minDegree: 331, maxDegree: 360, value: 2 },
+  { minDegree: 0, maxDegree: 30, value: "Try again" },
+  { minDegree: 31, maxDegree: 90, value: "10% off" },
+  { minDegree: 91, maxDegree: 150, value: "20% off"},
+  { minDegree: 151, maxDegree: 210, value: "30% off" },
+  { minDegree: 211, maxDegree: 270, value: "40% off" },
+  { minDegree: 271, maxDegree: 330, value: "50% off" },
+  { minDegree: 331, maxDegree: 360, value: "60% off" },
 ];
 //Size of each piece
 const data = [16, 16, 16, 16, 16, 16];
@@ -30,7 +30,7 @@ let myChart = new Chart(wheel, {
   type: "pie",
   data: {
     //Labels(values which are to be displayed on chart)
-    labels: [1, 2, 3, 4, 5, 6],
+    labels: [ Try Again, 10% off, 30% off, 40% Off, 50% off, 60% off],
     //Settings for dataset/pie
     datasets: [
       {
